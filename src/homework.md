@@ -1,11 +1,20 @@
--create a repository
--initialise the repository
--node_modules, package.json, package-lock.json. [See the chnages]
--Install Express
--create a server
--listen to port 7777
--write request handlers for /test, /hello
--install nodemon and update the scripts inside package.json
--what are dependencies
--what is the use of "-g" while npm install
--diifference between (^ vs ~) caret vs tilda. 
+- create a repository
+- initialise the repository
+- node_modules, package.json, package- lock.json. [See the chnages]
+- Install Express
+- create a server
+- listen to port 7777
+- write request handlers for /test, /hello
+- install nodemon and update the scripts inside package.json
+- what are dependencies
+- what is the use of "- g" while npm install
+- diifference between (^ vs ~) caret vs tilda.
+
+- initialize git by using git init command
+- .gitignore
+- create a remote repo on github
+- push all the code to remote repository
+- play with routes and route extensions eg. /hello, /, hello/2, /xyz
+- order of the routes matter a lot
+- install postman app and make a workspace/collection  > test API call
+- write logic for GET, POST, DELETE, PATCH, PUT api calls and test them on postman.

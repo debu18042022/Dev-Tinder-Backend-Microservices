@@ -2,16 +2,29 @@ const express = require("express");
 
 const app = express();
 
-app.use("/test", (req, res) => {
-  res.send("Hello from the test route");
+app.get("/user", (req, res) => {
+  res.send({
+    firstName: "Debu",
+    lastName: "Sahu",
+  });
 });
 
-app.use("/hello",(req,res)=>{
-    res.send("Hello hello hello!");
-})
+app.post("/user", (req, res) => {
+  res.send({
+    "setting the user": "Debu Sahu",
+  });
+});
 
-app.use((req, res) => {
-  res.send("Hello from the dashboard");
+app.delete("/user", (req, res) => {
+  res.send("User deleted successfully");
+});
+
+app.patch("/user", (req, res) => {
+  res.send("User updated successfully");
+});
+
+app.use("/test", (req, res) => {
+  res.send("Hello from the server");
 });
 
 app.listen(7777, () => {
