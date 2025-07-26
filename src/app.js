@@ -2,29 +2,14 @@ const express = require("express");
 
 const app = express();
 
-app.get("/user", (req, res) => {
+/**here :means it a dynamic route */
+app.get("/user/:userId/:Fname/:Lname", (req, res) => {
+  console.log("req.query", req.query);
+  console.log("req.params", req.params);
   res.send({
     firstName: "Debu",
     lastName: "Sahu",
   });
-});
-
-app.post("/user", (req, res) => {
-  res.send({
-    "setting the user": "Debu Sahu",
-  });
-});
-
-app.delete("/user", (req, res) => {
-  res.send("User deleted successfully");
-});
-
-app.patch("/user", (req, res) => {
-  res.send("User updated successfully");
-});
-
-app.use("/test", (req, res) => {
-  res.send("Hello from the server");
 });
 
 app.listen(7777, () => {
