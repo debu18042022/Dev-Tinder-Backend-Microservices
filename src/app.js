@@ -2,26 +2,19 @@ const express = require("express");
 
 const app = express();
 
-const { adminAuth } = require("./middlewares/auth");
-const { userAuth } = require("./middlewares/auth");
-
-app.use("/admin", adminAuth);
-// app.use("/user", userAuth);
-
-app.post("/user/login", (req, res, next) => {
-  res.status(200).send("user has been logged in");
+app.get("/user/getdata", (req, res, next) => {
+  try {
+    throw new Error("this is a test error");
+    res.status(200).send("data has been received");
+  } catch (err) {
+    res.status(500).send("An error occurred while processing your request.");
+  }
 });
 
-app.get("/user/getdata", userAuth, (req, res, next) => {
-  res.status(200).send("data has been received");
-});
-
-app.get("/admin/getalldata", (req, res, next) => {
-  res.status(200).send("all the data has been received");
-});
-
-app.delete("/admin/deletealldata", (req, res, next) => {
-  res.status(200).send("all the data has been deleted");
+//wild card error handling middleware
+app.use("/", (err, req, res, next) => {
+  console.error("Error occurred:", err.message);
+  res.status(500).send("An error occurred, please try again later.");
 });
 
 app.listen(7777, () => {
