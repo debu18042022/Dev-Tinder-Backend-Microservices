@@ -49,3 +49,7 @@
 - API -> get user by email
 - API -> Feed API - GET /feed - get all the users from the database
 - User.findOne() with duplicate email Id's , check which data or object retured
+- API - Create a Delete User Api
+- Difference between patch and put http method
+- API - update a user
+- explore the mongoose documentation for Model methods

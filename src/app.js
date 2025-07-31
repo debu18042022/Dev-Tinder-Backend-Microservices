@@ -6,6 +6,7 @@ const app = express();
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
+/*Api to create a user */
 app.post("/signup", async (req, res) => {
   // creating an instance of User Model or creating a new document or creating a new user using the User model constructor
   const user = new User(req.body);
@@ -31,7 +32,7 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-/**get single user */
+/**APi to get single user */
 app.get("/user", async (req, res) => {
   try {
     const user = await User.findOne(req.query);
@@ -40,6 +41,39 @@ app.get("/user", async (req, res) => {
     } else {
       res.status(200).send(user);
     }
+  } catch (err) {
+    res.status(400).send("Something went wrong" + err.message);
+  }
+});
+
+/**API to delete a user */
+app.delete("/user", async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const user = await User.findByIdAndDelete(userId);
+    // const user = await User.findOneAndDelete({ _id: userId });
+    if (!user) {
+      res.status(404).send("No user found with this ID");
+    }
+    res.status(200).send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong" + err.message);
+  }
+});
+
+/**API to update the user*/
+app.patch("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const dataToUpdate = req.body;
+    const updatedUser = await User.findByIdAndUpdate(userId, dataToUpdate, {
+      new: true,
+    });
+    console.log("Updated User:", updatedUser);
+    if (!updatedUser) {
+      res.status(404).send("No user found with this ID");
+    }
+    res.status(200).send(updatedUser);
   } catch (err) {
     res.status(400).send("Something went wrong" + err.message);
   }
