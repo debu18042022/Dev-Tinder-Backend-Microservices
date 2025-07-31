@@ -13,7 +13,35 @@ app.post("/signup", async (req, res) => {
     await user.save(); // save the document to the database
     res.status(200).send("User added successfully!");
   } catch (err) {
-    res.status(400).send("Error saving the user", err.message);
+    res.status(400).send("Error saving the user" + err.message);
+  }
+});
+
+/**Api to get all the users */
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.status(404).send("No users found");
+    } else {
+      res.status(200).send(users);
+    }
+  } catch (err) {
+    res.status(400).send("something went wrong" + err.message);
+  }
+});
+
+/**get single user */
+app.get("/user", async (req, res) => {
+  try {
+    const user = await User.findOne(req.query);
+    if (!user) {
+      res.status(404).send("No user found with this email");
+    } else {
+      res.status(200).send(user);
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong" + err.message);
   }
 });
 
