@@ -4,17 +4,11 @@ const User = require("./models/user");
 
 const app = express();
 
+app.use(express.json()); // Middleware to parse JSON bodies
+
 app.post("/signup", async (req, res) => {
-  const userObj = {
-    firstName: "Devvrat",
-    lastName: "Sahu",
-    email: "devvrat@gmail.com",
-    password: "Devvrat@123",
-  };
-
-  // creating an instance of User Model
-  const user = new User(userObj);
-
+  // creating an instance of User Model or creating a new document or creating a new user using the User model constructor
+  const user = new User(req.body);
   try {
     await user.save(); // save the document to the database
     res.status(200).send("User added successfully!");
