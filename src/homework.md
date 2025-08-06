@@ -53,3 +53,10 @@
 - Difference between patch and put http method
 - API - update a user
 - explore the mongoose documentation for Model methods
+
+- explore schematype options from the documentation
+- add required, unique, lowercase, min, minLength, trim etc.
+- Add default value
+- create a custom validate function for gender
+- Improve the DB schema- put all appropriate validations on each field in schema
+- Add timestamps to the userSchema
