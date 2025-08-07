@@ -10,11 +10,16 @@ app.use(express.json()); // Middleware to parse JSON bodies
 app.post("/signup", async (req, res) => {
   // creating an instance of User Model or creating a new document or creating a new user using the User model constructor
   const user = new User(req.body);
+  const { skills } = req.body;
+  
   try {
+    if (skills.length > 50) {
+      throw new Error("skills should not be more than 50");
+    }
     await user.save(); // save the document to the database
     res.status(200).send("User added successfully!");
   } catch (err) {
-    res.status(400).send("Error saving the user" + err.message);
+    res.status(400).send("Error saving the user " + err.message);
   }
 });
 
@@ -64,18 +69,33 @@ app.delete("/user", async (req, res) => {
 /**API to update the user*/
 app.patch("/user/:userId", async (req, res) => {
   try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "age",
+      "gender",
+      "skills",
+      "photoUrl",
+    ];
     const userId = req.params.userId;
     const dataToUpdate = req.body;
+
+    Object.keys(dataToUpdate).forEach((key) => {
+      if (!allowedFields.includes(key)) {
+        throw new Error(`Invalid field: ${key}  to update`);
+      }
+    });
+
     const updatedUser = await User.findByIdAndUpdate(userId, dataToUpdate, {
       new: true,
     });
-    console.log("Updated User:", updatedUser);
+
     if (!updatedUser) {
       res.status(404).send("No user found with this ID");
     }
     res.status(200).send(updatedUser);
   } catch (err) {
-    res.status(400).send("Something went wrong" + err.message);
+    res.status(400).send("Something went wrong " + err.message);
   }
 });
 

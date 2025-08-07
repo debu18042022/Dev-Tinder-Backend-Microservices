@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,10 +20,22 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid email address");
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error(
+            "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol."
+          );
+        }
+      },
     },
     age: {
       type: Number,
@@ -45,6 +58,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://tamilnaducouncil.ac.in/wp-content/uploads/2020/04/dummy-avatar.jpg",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid URL for photo");
+        }
+      },
     },
   },
   { timestamps: true } // This will automatically add createdAt and updatedAt fields
