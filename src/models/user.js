@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema
+(
   {
     firstName: {
       type: String,
@@ -12,6 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
+      required: true,
       maxLength: 100,
     },
     email: {

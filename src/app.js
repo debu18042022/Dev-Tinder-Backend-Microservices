@@ -1,6 +1,8 @@
 const express = require("express");
 const { connectDB } = require("./config/database");
 const User = require("./models/user");
+const { validatSignUpData, validateSkills } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -8,18 +10,28 @@ app.use(express.json()); // Middleware to parse JSON bodies
 
 /*Api to create a user */
 app.post("/signup", async (req, res) => {
-  // creating an instance of User Model or creating a new document or creating a new user using the User model constructor
-  const user = new User(req.body);
-  const { skills } = req.body;
-  
   try {
-    if (skills.length > 50) {
-      throw new Error("skills should not be more than 50");
-    }
+    // validation of data
+    validatSignUpData(req);
+
+    const { firstName, lastName, email, password } = req.body;
+
+    // Encrypt the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // creating an new instance of the User Model
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
     await user.save(); // save the document to the database
     res.status(200).send("User added successfully!");
   } catch (err) {
-    res.status(400).send("Error saving the user " + err.message);
+    res.status(400).send("ERROR : " + err.message);
   }
 });
 
