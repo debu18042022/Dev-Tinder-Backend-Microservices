@@ -1,25 +1,27 @@
-const adminAuth = (req, res, next) => {
-  // const token = req.body.token;
-  const token = "admin123"; // Simulating token retrieval for demonstration purposes
-  const isAdminAuthenticated = token === "admin123";
-  console.log("User authentication status:", isAdminAuthenticated);
-  if (isAdminAuthenticated) {
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+const userAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+
+    if (!token) {
+      throw new Error("invalid token, please login first");
+    }
+
+    const decoded = jwt.verify(token, "ThisIsASecretKey#98@91");
+    const { _id } = decoded;
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    req.user = user;
     next();
-  } else {
-    res.status(401).send("unauthorized access");
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
   }
 };
 
-const userAuth = (req, res, next) => {
-  // const token = req.body.token;
-  const token = "user123"; // Simulating token retrieval for demonstration purposes
-  const isUserAuthenticated = token === "user123";
-  console.log("User authentication status:", isUserAuthenticated);
-  if (isUserAuthenticated) {
-    next();
-  } else {
-    res.status(401).send("unauthorized access");
-  }
-};
-
-module.exports = { adminAuth, userAuth };
+module.exports = { userAuth };

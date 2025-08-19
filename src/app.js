@@ -4,6 +4,7 @@ const User = require("./models/user");
 const { validatSignUpData, validateSkills } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -45,20 +46,22 @@ app.post("/login", async (req, res) => {
     if (!email || !password) {
       throw new Error("Email and password are required");
     }
+    
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error("Invalid credentials");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    const isPasswordValid = await user.validatePassword(password);
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     }
 
-    const userId = user._id;
+    const token = user.getJWT();
 
-    const token = jwt.sign({ _id: userId }, "ThisIsASecretKey#98@91");
-
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Cookie expires in 7 days
+    });
 
     res.status(200).send("Login successful!!!");
   } catch (err) {
@@ -66,21 +69,23 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    console.log("token", token);
-
-    if (!token) {
-      throw new Error("please login first");
-    }
-
-    const decodeMessage = jwt.verify(token, "ThisIsASecretKey#98@91");
-    const { _id } = decodeMessage;
-    console.log("_id", _id);
-    const user = await User.findById(_id);
+    const { user } = req;
     res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
+app.post("/sendNewRequest", userAuth, async (req, res) => {
+  try {
+    const { user } = req;
+    res
+      .status(200)
+      .send(
+        `New connection request sent by ${user.firstName} ${user.lastName}`
+      );
   } catch (err) {
     res.status(400).send("ERROR : " + err.message);
   }

@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-const userSchema = new mongoose.Schema
-(
+const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -70,6 +71,20 @@ const userSchema = new mongoose.Schema
   { timestamps: true } // This will automatically add createdAt and updatedAt fields
 );
 
+// ✅ Define methods BEFORE model creation
+userSchema.methods.getJWT = function () {
+  const user = this;
+  return jwt.sign({ _id: user._id }, "ThisIsASecretKey#98@91", {
+    expiresIn: "7d",
+  });
+};
+
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+  const user = this;
+  return bcrypt.compare(passwordInputByUser, user.password);
+};
+
+// ✅ Model creation after attaching methods
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
