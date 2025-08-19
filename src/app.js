@@ -3,10 +3,13 @@ const { connectDB } = require("./config/database");
 const User = require("./models/user");
 const { validatSignUpData, validateSkills } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
+const cookieParser = require("cookie-parser");
 
 app.use(express.json()); // Middleware to parse JSON bodies
+app.use(cookieParser()); // Middleware to parse cookies
 
 /*Api to create a user */
 app.post("/signup", async (req, res) => {
@@ -50,7 +53,34 @@ app.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     }
+
+    const userId = user._id;
+
+    const token = jwt.sign({ _id: userId }, "ThisIsASecretKey#98@91");
+
+    res.cookie("token", token);
+
     res.status(200).send("Login successful!!!");
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    const { token } = cookies;
+    console.log("token", token);
+
+    if (!token) {
+      throw new Error("please login first");
+    }
+
+    const decodeMessage = jwt.verify(token, "ThisIsASecretKey#98@91");
+    const { _id } = decodeMessage;
+    console.log("_id", _id);
+    const user = await User.findById(_id);
+    res.send(user);
   } catch (err) {
     res.status(400).send("ERROR : " + err.message);
   }
