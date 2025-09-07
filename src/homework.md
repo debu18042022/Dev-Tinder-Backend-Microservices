@@ -81,5 +81,13 @@
 - add an userAuth middleware in /profile API and create a new /sendConnectionRequest API and add userAuth midlleware as well.
 - set the expiry of JWT token and cookies to 7 days.
 - create a userSchema method to getJWT()
-- create a userScema method to validatePassword(passwordInputByUser) 
+- create a userScema method to validatePassword(passwordInputByUser)
+
+- explore tider APIs
+- create a list of all API you can think of in DevTinder
+- group multiple routes under respective routers
+- read documentation for express.Router
+- create routes folder for managing auth, profile, request routers
+- create authRouter, profileRouter, requestRouter
+- import these routes in app.js
 
